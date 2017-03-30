@@ -1,7 +1,7 @@
 # iknn-LP
 Incomplete k-nearest neighbor query in postgresql using LP algorithm
 
-## Algorithm Discription
+## Algorithm Description
 ### LP algorithm:
   Please refer to Dr. Gao's paper: ***IkNN-TFS-Yunjun Gao-20150115***
 ### Initialization:
