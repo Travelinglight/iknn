@@ -1,16 +1,18 @@
 # iknn-LP
 Incomplete k-nearest neighbor query in postgresql using LP algorithm
 
-## Algorithm Discription
+## Algorithm Description
+
 ### LP algorithm:
   Please refer to Dr. Gao's paper: ***IkNN-TFS-Yunjun Gao-20150115***
+  
 ### Initialization:
-  1. Set up an extra table to record lattice-bucket relations. Each Lattice is identified by `ncomplete`, the number of completed fields of all the objects in it. Each bucket is identified by a bitmap, representing the incomplete state of objects in it. e.g. '1010' represents the 2nd and 4th field of the object is incomplete.
+  1. Set up an extra table to record lattice-bucket relations. Each Lattice is identified by `ncomplete`, the number of completed fields of all the objects in it. Each bucket is identified by a bitmap, representing the incomplete state of objects in it, e.g. '1010' represents that the 2nd and 4th field of the object is incomplete.
   2. Categorize all objects into buckets. Build a table for each bucket, storing the whole tuple and an extra column for `alphavalue`. A BTREE index is built on each bucket at the column `alphavalue`.
 
 ### Query
   1. Fetch all bitmaps from lattice-bucket table, ordering them by latticeid (`ncomplete`);
-  2. For each bitmap, fetch all tuples in the corresponding buckets, ordering them by alphavalue. Notice that a BTREE index has been built at the column alphavalue, postgres fetches tuples directly from Btree and doesn't need to sort them. The `order by` clause thus does not cause extra complexity;
+  2. For each bitmap, fetch all tuples in the corresponding buckets, ordering them by alphavalue. Notice that a BTREE index has been built at the column alphavalue, postgres fetches tuples directly from Btree without sort them. Thus, the `order by` clause does not cause extra complexity;
   3. Calculate the qAlpha according to the bitmap, and binary-search its position in the fetched tuples;
   4. Search forward and backward with alpha value pruning and partial distance pruning (mentioned in the paper), while maintaining a max-heap as the candidate set;
   5. Return all the tuples remained in the candidate set.
@@ -18,7 +20,7 @@ Incomplete k-nearest neighbor query in postgresql using LP algorithm
 ## Testing Environment
   1. Device: Macbook Pro 2015
   2. OS: ubuntu gnome 14.04
-  3. PostgreSQL version: PostgreSQL 9.4
+  3. PostgreSQL version: 9.4
 
 ## How to use?
 ### 0. Install postgresql-server-dev first
@@ -81,7 +83,7 @@ The lpinit function automatically does these things:
 ~~~
 * a0,a1,a2,a3 are columns in the table _test_.
 * 31,32,33,34 are values of the columns respectively.
-* the query object must have values for all columns of the query table
+* The query object must have values for all columns of the query table
 * The tuples returned are those considered nearest with the query object.
 
 ### 7. Here's the result
@@ -94,7 +96,7 @@ The lpinit function automatically does these things:
 (3 rows)
 ~~~
 
-### 8. Inport LPwithdraw.sql
+### 8. Import LPwithdraw.sql
 
 ~~~
     \i LPwithdraw.sql
@@ -134,4 +136,4 @@ This function automatically does these things:
 
 ## Contact us
 1. You can get the paper from Dr. Gao: gaoyj@zju.edu.cn
-2. The projet is coded by Kingston Chen, feel free to ask any questions: holaelmundokingston@gmail.com
+2. The project is coded by Kingston Chen, feel free to ask any questions: holaelmundokingston@gmail.com
